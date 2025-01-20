@@ -4,7 +4,7 @@
 % --------------
 
 clc
-clear vars
+clear all
 close all
 dbstop if error
 
@@ -12,22 +12,34 @@ dbstop if error
 % -----------
 
 % Add SPM 12, JSONLAB and dicm2nii to Matlab path
-addpath('~/Dropbox/gabor_bandit/code/spm12')
-addpath(genpath('~/Dropbox/gb_fmri/utilities/JSONLAB'))
-addpath(genpath('~/Dropbox/gb_fmri/utilities/dicm2nii'))
+addpath(fullfile(userpath, 'GitHub', 'spm12'))
+addpath(fullfile(userpath, 'GitHub', 'jsonlab'))
+addpath(fullfile(userpath, 'GitHub', 'dicm2nii'))
 
 % fMRI data
-src_dir_fMRI = '~/Documents/gb_fmri_data/raw_data'; 
-subj_dirs_fMRI = {'ccnb_7848'};
+if ispc
+    src_dir_fMRI = fullfile('G:', 'Pilot_P8_MRT');  % For Windows
+elseif isunix
+    src_dir_fMRI = fullfile('/Volumes', 'Pilot_P8_MRT');  % For Mac
+else
+    error('Unsupported platform');
+end
+subj_dirs_fMRI = {['00001']};
 
 % BIDS directory
-bids_dir = '~/Documents/gb_fmri_data/BIDS/ds_xxx';
+if ispc
+    bids_dir = fullfile('G:', 'Pilot_P8_MRT', 'BIDS');  % For Windows
+elseif isunix
+    bids_dir = fullfile('/Volumes', 'Pilot_P8_MRT', 'BIDS');  % For Mac
+else
+    error('Unsupported platform');
+end
 
 % TODO: nochmal checken ob wir das auch brauchen                                                
 bids_rn = 'README_bids_data.md';
 
 % Subject specific run numbering
-subj_runs = {[1 2 3 4 5 6 7]};
+subj_runs = {[10 12 14 16 19]};
 
 % Create main BIDS folder
 if exist(bids_dir, 'dir')
@@ -46,6 +58,7 @@ bids_vars.src_dir_fMRI = src_dir_fMRI;
 bids_vars.bids_dir = bids_dir;
 bids_vars.bids_rn = bids_rn;
 bids_vars.num_subs = 1;
+bids_vars.subj_dir_fMRI = subj_dirs_fMRI;
 
 % Bids object instance
 bids = gb_bidsobj(bids_vars);
@@ -54,12 +67,12 @@ bids = gb_bidsobj(bids_vars);
 % ---------------
 
 % Cycle over participants
-for i = 1:1 %numel(subj_dirs_beh)
+for i = 1:numel(subj_dirs_fMRI)
     
-    % Update participant infor
+    % Update participant information
     bids.s = i; 
     bids.subj_dir_fMRI = subj_dirs_fMRI{i}; 
-    bids.run = subj_runs{i}; 
+    bids.run = subj_runs{i};
     
     % Subject-wise BIDS conversion
     bids.bids_conv_part();

@@ -29,8 +29,7 @@ classdef gb_bidsobj
             % Initialize other properties
             bidsobj.s = nan; 
             bidsobj.subj_dir_fMRI = nan; 
-            bidsobj.run = nan; 
-            
+            bidsobj.run = nan;            
         end
         
         function bidsobj = bids_conv_part(bidsobj)
@@ -47,53 +46,53 @@ classdef gb_bidsobj
             else
                 su = num2str(bidsobj.s);
             end
-            
+
             % Create directory
             subj_bids = fullfile(bidsobj.bids_dir, ['sub-', num2str(su)]);
             mkdir(subj_bids);
-             
-            % % T1 data conversion
-            %
-            % % T1 source directory
-            % t1_src = fullfile(src_dir_fMRI, subj_dir_fMRI, 'T1_MPR_NS_SAG_P2_ISO_0002');
-            %
-            % % check if T1 data available
-            % if exist(t1_src, 'dir')
-            %
-            %     % create anatomy directory
-            %     t1_bids = [subj_bids, filesep 'anat' filesep];
-            %     mkdir(t1_bids);
-            %
-            %     % convert dicom to nifti using the dicm2nii package
-            %     dicm2nii(t1_src, t1_bids);
-            %
-            %     % rename NIFTI
-            %     movefile(fullfile(t1_bids, 't1_mpr_ns_sag_p2_iso.nii.gz'), fullfile(t1_bids, [['sub-',su], '_T1w.nii.gz']));
-            %
-            %     % create *T1w.json file
-            %     % ---------------------------------------------------------------------
-            %
-            %     % load header data
-            %     metadata = load(fullfile(t1_bids, 'dcmHeaders.mat'));
-            %     metadata = metadata.h.t1_mpr_ns_sag_p2_iso;
-            %
-            %     % convert units: date, elapsed time
-            %     metadata_un = conv_unit(metadata);
-            %
-            %     % remove/correct fields with identifiers
-            %     metadata_nid = rem_ident(metadata_un);
-            %
-            %     % save *T1w.json file
-            %     savejson('',metadata_nid, fullfile(t1_bids, [['sub-',su] '_T1w.json']));
-            %     delete(fullfile(t1_bids, 'dcmHeaders.mat'))
-            %
-            %     % inform user
-            %     fprintf(['saving *T1w.json file ' ['sub-',su] '\n'])
-            %
-            %     % clear variables
-            %     clearvars metadata metadata_un metadata_nid
-            %
-            % end
+
+            % T1 data conversion
+
+            % T1 source directory
+            t1_src = fullfile(bidsobj.src_dir_fMRI, bidsobj.subj_dir_fMRI, 'DICOM', 'RUN19');
+
+            % check if T1 data available
+            if exist(t1_src, 'dir')
+
+                % create anatomy directory
+                t1_bids = [subj_bids, filesep 'anat' filesep];
+                mkdir(t1_bids);
+
+                % convert dicom to nifti using the dicm2nii package
+                dicm2nii(t1_src, t1_bids)
+
+                % rename NIFTI
+                movefile(fullfile(t1_bids, 'anat_t1w_mprage_sag_p2_0_8mm.nii.gz'), fullfile(t1_bids, [['sub-',su], '_T1w.nii.gz']));
+
+                % create *T1w.json file
+                % ---------------------------------------------------------------------
+
+                % load header data
+                metadata = load(fullfile(t1_bids, 'dcmHeaders.mat'));
+                metadata = metadata.h.anat_t1w_mprage_sag_p2_0_8mm;
+
+                % convert units: date, elapsed time
+                [bidsobj, metadata_un] = conv_unit(bidsobj, metadata);
+
+                % remove/correct fields with identifiers
+                [bidsobj, metadata_nid] = rem_ident(bidsobj, metadata_un);
+
+                % save *T1w.json file
+                savejson('',metadata_nid, fullfile(t1_bids, [['sub-',su] '_T1w.json']));
+                delete(fullfile(t1_bids, 'dcmHeaders.mat'))
+
+                % inform user
+                fprintf(['saving *T1w.json file ' ['sub-',su] '\n'])
+
+                % clear variables
+                clearvars metadata metadata_un metadata_nid
+
+            end
             
             % EPI data conversion
             % -------------------
@@ -103,25 +102,25 @@ classdef gb_bidsobj
             mkdir(epi_bids)
             
             % Cycle over runs
-            for r = 2:length(bidsobj.run)  % todo: achtung, aufpassen
+            for r = [10 12 14 16]  % todo: achtung, aufpassen
                  
                 % EPI source directory
                 epi_src = fullfile(bidsobj.src_dir_fMRI, bidsobj.subj_dir_fMRI, 'DICOM', ['RUN' num2str(r)]);
                 
                 % Convert dicom to nifti using the dicm2nii package
-                dicm2nii(epi_src, epi_bids)
-                
+                dicm2nii(epi_src, epi_bids);
+
                 % Rename NIFTI
-                movefile(fullfile(epi_bids, ['ep2d_TR2000_iPAT_3x3x3_asc_176.nii.gz']), fullfile(epi_bids, [['sub-', su] '_task-gb_run-0' num2str(r) '_bold.nii.gz']));
+                movefile(fullfile(epi_bids, 'ep2d_func_task_Predator_dir_AP_bold.nii.gz'), fullfile(epi_bids, [['sub-', su] '_task-gb_run-0' num2str(r) '_bold.nii.gz']));
                 
                 % Create *bold.json file
                 % ----------------------
                 
                 % Load header data
                 metadata = load(fullfile(epi_bids, 'dcmHeaders.mat'));
-                fn = 'ep2d_TR2000_iPAT_3x3x3_asc_176';
+                fn = 'ep2d_func_task_Predator_dir_AP_bold'; % Extract the filename without the extension
                 metadata = metadata.h.(fn);
-                
+
                 % Convert units: date, elapsed time
                 [bidsobj, metadata_un] = conv_unit(bidsobj, metadata);
 
@@ -162,12 +161,12 @@ classdef gb_bidsobj
             % Convert date and time
             % ---------------------
             
-            YYYY = '1900';
-            MM = metadata_orig.AcquisitionDate(5:6);
-            DD = metadata_orig.AcquisitionDate(7:8);
-            hh = metadata_orig.AcquisitionTime(1:2);
-            mm = metadata_orig.AcquisitionTime(3:4);
-            ss = metadata_orig.AcquisitionTime(5:6);
+            YYYY = metadata_orig.AcquisitionDateTime(1:4);
+            MM = metadata_orig.AcquisitionDateTime(5:6);
+            DD = metadata_orig.AcquisitionDateTime(7:8);
+            hh = metadata_orig.AcquisitionDateTime(9:10);
+            mm = metadata_orig.AcquisitionDateTime(11:12);
+            ss = metadata_orig.AcquisitionDateTime(13:14);
             
             fields_dates_mod = {'StudyDate'
                 'SeriesDate'
@@ -273,7 +272,7 @@ classdef gb_bidsobj
             end
             
             % remove additional identifiers and redundant information
-            rf = {'PatientBirthDate', 'AcquisitionDate', 'AcquisitionTime'};
+            rf = {'PatientBirthDate', 'AcquisitionDateTime'};
             metadata_un = rmfield(metadata_un, rf);
             
             % return metadata without identifiers
@@ -319,8 +318,11 @@ classdef gb_bidsobj
             
             % Initialize participant data array
             participants = cell(bidsobj.num_subs, 4);
-            
+
             % Add IDs
+            metadata = load(fullfile( 'dcmHeaders.mat'));
+            metadata = metadata.h.anat_t1w_mprage_sag_p2_0_8mm;
+
             for i = 1:bidsobj.num_subs
                 if i<10
                     participants(i,1) = {['sub-0' num2str(i)]};
