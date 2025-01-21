@@ -11,16 +11,16 @@ dbstop if error
 % Directories 
 % -----------
 
-% Add SPM 12, JSONLAB and dicm2nii to Matlab path
-addpath(fullfile(userpath, 'GitHub', 'spm12'))
-addpath(fullfile(userpath, 'GitHub', 'jsonlab'))
-addpath(fullfile(userpath, 'GitHub', 'dicm2nii'))
+% % Add SPM 12, JSONLAB and dicm2nii to Matlab path
+addpath(fullfile(userpath, 'spm12'))
+addpath(fullfile(userpath, 'jsonlab'))
+addpath(fullfile(userpath, 'dicm2nii'))
 
 % fMRI data
 if ispc
     src_dir_fMRI = fullfile('G:', 'Pilot_P8_MRT');  % For Windows
 elseif isunix
-    src_dir_fMRI = fullfile('/Volumes', 'Pilot_P8_MRT');  % For Mac
+    src_dir_fMRI = fullfile('/Volumes', '/WORK', 'Pilot_P8_MRT');  % For Mac
 else
     error('Unsupported platform');
 end
@@ -30,7 +30,7 @@ subj_dirs_fMRI = {['00001']};
 if ispc
     bids_dir = fullfile('G:', 'Pilot_P8_MRT', 'BIDS');  % For Windows
 elseif isunix
-    bids_dir = fullfile('/Volumes', 'Pilot_P8_MRT', 'BIDS');  % For Mac
+    bids_dir = fullfile('/Volumes', '/WORK', 'Pilot_P8_MRT', 'BIDS');  % For Mac
 else
     error('Unsupported platform');
 end
