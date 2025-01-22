@@ -319,10 +319,6 @@ classdef gb_bidsobj
             % Initialize participant data array
             participants = cell(bidsobj.num_subs, 4);
 
-            % Add IDs
-            metadata = load(fullfile( 'dcmHeaders.mat'));
-            metadata = metadata.h.anat_t1w_mprage_sag_p2_0_8mm;
-
             for i = 1:bidsobj.num_subs
                 if i<10
                     participants(i,1) = {['sub-0' num2str(i)]};
