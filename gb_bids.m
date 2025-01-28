@@ -57,7 +57,7 @@ bids_vars = [];
 bids_vars.src_dir_fMRI = src_dir_fMRI; 
 bids_vars.bids_dir = bids_dir;
 bids_vars.bids_rn = bids_rn;
-bids_vars.num_subs = 1;
+bids_vars.num_subs = length(subj_dirs_fMRI);;
 bids_vars.subj_dir_fMRI = subj_dirs_fMRI;
 
 % Bids object instance
