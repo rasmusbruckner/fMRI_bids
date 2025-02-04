@@ -54,7 +54,7 @@ classdef gb_bidsobj
             % T1 data conversion
 
             % T1 source directory
-            t1_src = fullfile(bidsobj.src_dir_fMRI, bidsobj.subj_dir_fMRI, 'DICOM', 'RUN19');
+            t1_src = fullfile(bidsobj.src_dir_fMRI, bidsobj.subj_dir_fMRI, 'DICOM', 'anat_t1w_mprage_sag_p2_0.8mm_19_MR');
 
             % check if T1 data available
             if exist(t1_src, 'dir')
@@ -102,11 +102,11 @@ classdef gb_bidsobj
             mkdir(epi_bids)
             
             % Cycle over runs
-            for r = [10 12 14 16]  % todo: achtung, aufpassen
-                 
+            for r = [10 12 14 16];
+
                 % EPI source directory
-                epi_src = fullfile(bidsobj.src_dir_fMRI, bidsobj.subj_dir_fMRI, 'DICOM', ['RUN' num2str(r)]);
-                
+                epi_src = fullfile(bidsobj.src_dir_fMRI, bidsobj.subj_dir_fMRI, 'DICOM', ['ep2d_func_task-Predator_dir-AP_bold_', num2str(r), '_MR']);
+
                 % Convert dicom to nifti using the dicm2nii package
                 dicm2nii(epi_src, epi_bids);
 
