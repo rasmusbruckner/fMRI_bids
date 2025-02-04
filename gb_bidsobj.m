@@ -120,6 +120,10 @@ classdef gb_bidsobj
                 metadata = load(fullfile(epi_bids, 'dcmHeaders.mat'));
                 fn = 'ep2d_func_task_Predator_dir_AP_bold'; % Extract the filename without the extension
                 metadata = metadata.h.(fn);
+                spm_sec = ((0.5 - metadata.SliceTiming) * metadata.RepetitionTime) / 1000;
+                [~, spm_order] = sort(-metadata.SliceTiming);
+                metadata.SliceTiming = spm_sec;
+                metadata.SliceOrder = spm_order;
 
                 % Convert units: date, elapsed time
                 [bidsobj, metadata_un] = conv_unit(bidsobj, metadata);
