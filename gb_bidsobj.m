@@ -111,7 +111,7 @@ classdef gb_bidsobj
                 dicm2nii(epi_src, epi_bids);
 
                 % Rename NIFTI
-                movefile(fullfile(epi_bids, 'ep2d_func_task_Predator_dir_AP_bold.nii.gz'), fullfile(epi_bids, [['sub-', su] '_task-gb_run-0' num2str(r) '_bold.nii.gz']));
+                movefile(fullfile(epi_bids, 'ep2d_func_task_Predator_dir_AP_bold.nii.gz'), fullfile(epi_bids, [['sub-', su] '_Predator_run-0' num2str(r) '_bold.nii.gz']));
                 
                 % Create *bold.json file
                 % ----------------------
@@ -120,6 +120,7 @@ classdef gb_bidsobj
                 metadata = load(fullfile(epi_bids, 'dcmHeaders.mat'));
                 fn = 'ep2d_func_task_Predator_dir_AP_bold'; % Extract the filename without the extension
                 metadata = metadata.h.(fn);
+                %%% Needed for correct slice time for spm. From dicm2nii
                 spm_sec = ((0.5 - metadata.SliceTiming) * metadata.RepetitionTime) / 1000;
                 [~, spm_order] = sort(-metadata.SliceTiming);
                 metadata.SliceTiming = spm_sec;
