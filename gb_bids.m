@@ -24,7 +24,7 @@ elseif isunix
 else
     error('Unsupported platform');
 end
-subj_dirs_fMRI = {['00001']};
+subj_dirs_fMRI = {'00001', '00002'};
 
 % BIDS directory
 if ispc
@@ -39,7 +39,7 @@ end
 bids_rn = 'README_bids_data.md';
 
 % Subject specific run numbering
-subj_runs = {[10 12 14 16 19]};
+subj_runs = {[10 12 14 16 19],[10 12 14 16 19]};
 
 % Create main BIDS folder
 if exist(bids_dir, 'dir')
