@@ -4,9 +4,9 @@
 % --------------
 
 clc
+remAppledouble
 clear all
 close all
-dbstop if error
 
 % Directories 
 % -----------
