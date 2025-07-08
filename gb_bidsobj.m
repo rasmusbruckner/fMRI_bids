@@ -54,7 +54,7 @@ classdef gb_bidsobj
             % T1 data conversion
 
             % T1 source directory
-            t1_src = fullfile(bidsobj.src_dir_fMRI, bidsobj.subj_dir_fMRI, 'DICOM', 'anat_t1w_mprage_sag_p2_0.8mm_19_MR');
+            t1_src = fullfile(bidsobj.src_dir_fMRI, bidsobj.subj_dir_fMRI, 'DICOM', 'T1w_MPR_1mm_27_MR');
 
             % check if T1 data available
             if exist(t1_src, 'dir')
@@ -67,14 +67,14 @@ classdef gb_bidsobj
                 dicm2nii(t1_src, t1_bids)
 
                 % rename NIFTI
-                movefile(fullfile(t1_bids, 'anat_t1w_mprage_sag_p2_0_8mm.nii.gz'), fullfile(t1_bids, [['sub-',su], '_T1w.nii.gz']));
+                movefile(fullfile(t1_bids, 'T1w_MPR_1mm.nii.gz'), fullfile(t1_bids, [['sub-',su], '_T1w.nii.gz']));
 
                 % create *T1w.json file
                 % ---------------------------------------------------------------------
 
                 % load header data
                 metadata = load(fullfile(t1_bids, 'dcmHeaders.mat'));
-                metadata = metadata.h.anat_t1w_mprage_sag_p2_0_8mm;
+                metadata = metadata.h.T1w_MPR_1mm;
 
                 % convert units: date, elapsed time
                 [bidsobj, metadata_un] = conv_unit(bidsobj, metadata);
@@ -102,7 +102,7 @@ classdef gb_bidsobj
             mkdir(epi_bids)
             
             % Cycle over runs
-            for r = [10 12 14 16];
+            for r = [14 17 20 23];
 
                 % EPI source directory
                 epi_src = fullfile(bidsobj.src_dir_fMRI, bidsobj.subj_dir_fMRI, 'DICOM', ['ep2d_func_task-Predator_dir-AP_bold_', num2str(r), '_MR']);
@@ -136,7 +136,7 @@ classdef gb_bidsobj
                 [bidsobj, metadata_comp] = add_fields(bidsobj, metadata_nid);
 
                 % save *bold.json file
-                savejson('',metadata_comp, fullfile(epi_bids, [['sub-',su] '_task-gb_run-0' num2str(r) '_bold.json']));
+                savejson('',metadata_comp, fullfile(epi_bids, [['sub-',su] '_Predaotr_run-0' num2str(r) '_bold.json']));
                 delete(fullfile(epi_bids, 'dcmHeaders.mat'))
                 
                 % Inform user
