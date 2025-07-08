@@ -8,7 +8,10 @@ remAppledouble
 clear all
 close all
 
-% Directories 
+% Ensure pigz (for faster compressions) is found by MATLAB
+setenv('PATH', [getenv('PATH') ':/opt/homebrew/bin']);
+
+% Directories
 % -----------
 
 % % Add SPM 12, JSONLAB and dicm2nii to Matlab path
@@ -18,19 +21,19 @@ addpath(fullfile(userpath, 'dicm2nii'))
 
 % fMRI data
 if ispc
-    src_dir_fMRI = fullfile('G:', 'Pilot_P8_MRT');  % For Windows
+    src_dir_fMRI = fullfile('G:', '1_RU5389', '1_DICOMs');
 elseif isunix
-    src_dir_fMRI = fullfile('/Volumes', '/WORK', 'Pilot_P8_MRT');  % For Mac
+    src_dir_fMRI = fullfile('/Volumes/WORK/1_RU5389');
 else
     error('Unsupported platform');
 end
-subj_dirs_fMRI = {'00001', '00002', '00003'};
+subj_dirs_fMRI = {'80002'};
 
 % BIDS directory
 if ispc
-    bids_dir = fullfile('G:', 'Pilot_P8_MRT', 'BIDS');  % For Windows
+    bids_dir = fullfile('G:', '1_RU5389', '2_BIDS');
 elseif isunix
-    bids_dir = fullfile('/Volumes', '/WORK', 'Pilot_P8_MRT', 'BIDS');  % For Mac
+    bids_dir = fullfile('/Volumes/WORK/1_RU5389/2_BIDS');
 else
     error('Unsupported platform');
 end
@@ -39,7 +42,7 @@ end
 bids_rn = 'README_bids_data.md';
 
 % Subject specific run numbering
-subj_runs = {[10 12 14 16 19],[10 12 14 16 19],[10 12 14 16 19]};
+subj_runs = {[14 17 20 23 27]};
 
 % Create main BIDS folder
 if exist(bids_dir, 'dir')
