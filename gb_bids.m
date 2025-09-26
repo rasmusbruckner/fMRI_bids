@@ -4,8 +4,7 @@
 % --------------
 
 clc
-remAppledouble
-clear all
+clear
 close all
 
 % Ensure pigz (for faster compressions) is found by MATLAB
