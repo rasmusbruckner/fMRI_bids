@@ -70,7 +70,7 @@ classdef gb_bidsobj
                 movefile(fullfile(t1_bids, 'T1w_MPR_1mm.nii.gz'), fullfile(t1_bids, [['sub-',su], '_T1w.nii.gz']));
 
                 % create *T1w.json file
-                % ---------------------------------------------------------------------
+                % --------------------------
 
                 % load header data
                 metadata = load(fullfile(t1_bids, 'dcmHeaders.mat'));
@@ -120,7 +120,7 @@ classdef gb_bidsobj
                 metadata = load(fullfile(epi_bids, 'dcmHeaders.mat'));
                 fn = 'ep2d_func_task_Predator_dir_AP_bold'; % Extract the filename without the extension
                 metadata = metadata.h.(fn);
-                %%% Needed for correct slice time for spm. From dicm2nii
+                % *** Needed for correct slice time for spm. From dicm2nii: ***
                 spm_sec = ((0.5 - metadata.SliceTiming) * metadata.RepetitionTime) / 1000;
                 [~, spm_order] = sort(-metadata.SliceTiming);
                 metadata.SliceTiming = spm_sec;
